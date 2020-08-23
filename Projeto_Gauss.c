@@ -194,7 +194,8 @@ int main()
 
   printMatriz();
 
-  checkLinhasIguais();
+  //Está com erro. Julio Corrigindo.
+  //checkLinhasIguais();
 
   checkZeroDiagonal();
 
