@@ -99,36 +99,37 @@ void printMatriz()
 //Checa se existem linhas iguais na matriz.
 void checkLinhasIguais()
 {
-  int iComparada = 1, qntElementosIguais;
+  int iComparada = 0, qntElementosIguais;
 
-  printf("\nRodou o check!");
-
-  for(int i = 0; i < linhas - 1; i++)//Compara 0 com 1,2; 1 com 2 e n compara a 2;
+  for(int i = 0; i < linhas - 1; i++)
   {
-    printf("Rodou o primeiro for!");
-    qntElementosIguais = 0;
+    iComparada++;
 
-    for(int j = 0; j < colunas; j++)
+    for(iComparada; iComparada < linhas; iComparada++)
     {
-      printf("Rodou o segundo for!");
-      // if(matriz[i][j] == matriz[i + iComparada][j])
-      //   qntElementosIguais++;
-    }
-    
-    printf("\n\nComparou a  linha %d com a linha %d.", i, i + iComparada);
+      qntElementosIguais = 0;
 
-    if(qntElementosIguais == colunas)
-    {
-      printf("\n\nExistem linhas iguais!");
-      printf("\nPor conta disso, é impossível resolver o sistema ;(");
-      printf("\nO programa será encerrado agora . . .\n");
-      fflush(stdin);
-      getchar();
-      exit(0);
-    }
+      for(int j = 0; j < colunas; j++)
+      {
+        if(matriz[i][j] == matriz[iComparada][j])
+        qntElementosIguais++;
+      }
+      
+      printf("\n\n\tComparou a  linha %d com a linha %d.", i, iComparada);
 
-    if(i + iComparada < linhas)
-      iComparada++;
+      //Termina o programa em caso de linhas iguais.
+      if(qntElementosIguais == colunas)
+      {
+        printf("\n\n\tA linha %d e a linha %d são iguais!", i, iComparada);
+        printf("\n\tPor conta disso, é impossível resolver o sistema");
+        printf("\n\n\tO programa será encerrado agora . . .");
+
+        getchar();getchar();//Por alguma razão o fflush não funcionou aqui.
+
+        exit(0);
+      }
+    }
+    iComparada = i + 1;
   }
 }
 
@@ -158,7 +159,7 @@ void checkZeroDiagonal()
     //Checa se existem 0s na diagonal.
     if(matriz[linha][coluna] == 0)
     {
-      printf("\n\tExiste 0 na diagonal da linha %d!", linha + 1);
+      printf("\n\n\tExiste 0 na diagonal da linha %d!", linha + 1);
 
       //Checa e efetua trocas possíveis.
       for(int i = 0; i < linhas; i++)
@@ -194,10 +195,11 @@ int main()
 
   printMatriz();
 
-  //Está com erro. Julio Corrigindo.
-  //checkLinhasIguais();
+  checkLinhasIguais();//Funcional
 
-  checkZeroDiagonal();
+  checkZeroDiagonal();//Funcional
+
+  liberarMemoria();
 
   getchar();getchar();
   return(0);
