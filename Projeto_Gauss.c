@@ -146,38 +146,125 @@ void trocaDeLinhas(int linhaTrocada, int linhaNova)
 
 void checaZerosNaDiagonal()
 {
+  int colunaAtual, colunaComparada, linhaCorreta, somaVetorAtual, **quantidadeColunas = (int **)malloc((linhas) * sizeof(int *));
+  float *vetorLinhaAtual = (float *)malloc(colunas * sizeof(float)), *vetorComparado = (float *)malloc(colunas * sizeof(float));
+
+  for (int i = 0; i < linhas; i++)
+  {
+    quantidadeColunas[i] = (int *)malloc((colunas) * sizeof(int));
+  }
+
   for (int linha = 0; linha < linhas; linha++)
   {
-    int coluna = linha;
+    colunaAtual = linha;
 
-    if (matriz[linha][coluna] == 0)
+    vetorLinhaAtual = matriz[linha];
+    for (int i = 0; i < linhas; i++)
     {
-      printf("\n\n\tExiste 0 na diagonal da linha %d!", linha + 1);
+      colunaComparada = i;
 
-      //Checa e efetua trocas possíveis.
-      for (int i = 0; i < linhas; i++)
+      quantidadeColunas[linha][colunas - 1] = -1;
+
+      if (i == linha)
       {
-        if (matriz[i][coluna] != 0 && matriz[linha][i] != 0)
+        if (vetorLinhaAtual[linha] != 0)
         {
-          printf("\n\t-Da pra trocar a %dª linha com a %dª!!", linha + 1, i + 1);
-          trocaDeLinhas(linha, i);
-          break;
+          quantidadeColunas[linha][colunaComparada] = 1;
+        }
+        else
+        {
+          quantidadeColunas[linha][colunaComparada] = 0;
+        }
+        continue;
+      }
+
+      vetorComparado = matriz[i];
+
+      if ((vetorLinhaAtual[linha] == 0 && vetorComparado[linha] != 0) && vetorLinhaAtual[colunaComparada] != 0)
+      {
+        quantidadeColunas[linha][colunaComparada] = 1;
+        quantidadeColunas[colunaComparada][colunaAtual] = 1;
+        printf("\n posso trocar a linha %d pela linha %d \n", linha, colunaComparada);
+      }
+      else
+      {
+        printf("\n NAO posso trocar a linha %d pela linha %d \n", linha, colunaComparada);
+        quantidadeColunas[linha][colunaComparada] = 0;
+        quantidadeColunas[colunaComparada][colunaAtual] = 0;
+      }
+    }
+  }
+
+  for (int i = 0; i < colunas - 1; i++)
+  {
+    somaVetorAtual = 0;
+
+    for (int j = 0; j < linhas; j++)
+    {
+      if (quantidadeColunas[i][j] == 1)
+      {
+        linhaCorreta = j;
+      }
+
+      somaVetorAtual += quantidadeColunas[i][j];
+    }
+
+    if (somaVetorAtual == 0)
+    {
+      printf("FUDEUDISAL.");
+    }
+
+    if (somaVetorAtual == 1)
+    {
+      if (quantidadeColunas[i][i] == 1)
+      {
+        quantidadeColunas[i][colunas - 1] = i;
+        printf("\n linha %d coluna %d : %d \n", i, colunas, quantidadeColunas[i][colunas - 1]);
+      }
+      else
+      {
+        quantidadeColunas[linhaCorreta][colunas - 1] = linhaCorreta;
+        printf("\n linha correta %d coluna %d : %d \n", linhaCorreta, colunas, quantidadeColunas[linhaCorreta][colunas - 1]);
+      }
+    }
+    else
+    {
+      if (quantidadeColunas[i][i] == 1)
+      {
+        quantidadeColunas[i][colunas - 1] = i;
+        printf("\n linha %d coluna %d : %d \n", i, colunas, quantidadeColunas[i][colunas - 1]);
+      }
+      else
+      {
+        for (int j = 0; j < colunas - 1; j++)
+        {
+          if (quantidadeColunas[j][colunas - 1] == -1)
+          {
+            quantidadeColunas[linhaCorreta][colunas - 1] = linhaCorreta;
+            printf("\n linha correta %d coluna %d : %d \n", linhaCorreta, colunas, quantidadeColunas[linhaCorreta][colunas - 1]);
+            break;
+          }
         }
       }
     }
-
-    if (matriz[linha][coluna] == 0)
-    {
-      printf("\n\n\tInfelizmente não tem como eliminar o 0 da diagonal.");
-      printf("\n\tPor conta disso, é impossível resolver o sistema.");
-      printf("\n\n\tO programa será encerrado . . .");
-
-      fflush(stdin);
-      getchar();
-
-      exit(0);
-    }
   }
+
+  printf("============ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA \n\n");
+
+  for (int linha = 0; linha < linhas; linha++)
+  {
+    printf("\n\t");
+    for (int coluna = 0; coluna < colunas; coluna++)
+    {
+      printf(" %d ", quantidadeColunas[linha][coluna]);
+    }
+    printf("\n");
+  }
+
+  printf("============ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA \n\n");
+  free(vetorLinhaAtual);
+  free(vetorComparado);
+  free(quantidadeColunas);
 }
 
 // Transforma as diagonais em 1 e as colunas em 0 (Passo 7 ao 13)
@@ -189,16 +276,16 @@ void normalizarMatriz()
   {
     for (int linhaAtual = 0; linhaAtual < linhas; linhaAtual++)
     {
-      printf("\n\n\n\n MATRIZ \n\n\n");
-      imprimirMatriz();
-      printf("\n\n\n\n MATRIZ \n\n\n");
+      //printf("\n\n\n\n MATRIZ \n\n\n");
+      // imprimirMatriz();
+      // printf("\n\n\n\n MATRIZ \n\n\n");
 
       // Diagonal da coluna atual
       if (matriz[colunaAtual][colunaAtual] != 1)
       {
-        printf("DIAGONAL %d \n", colunaAtual);
+        //printf("DIAGONAL %d \n", colunaAtual);
         divisorLinha = matriz[colunaAtual][colunaAtual];
-        printf("DIVISOR = %f \n", divisorLinha);
+        //  printf("DIVISOR = %f \n", divisorLinha);
         for (int k = 0; k < colunas; k++)
         {
           matriz[colunaAtual][k] /= divisorLinha;
@@ -208,12 +295,12 @@ void normalizarMatriz()
       // Se estiver apontando para uma diagonal ou o campo já estiver 0, continuo o for
       if (linhaAtual == colunaAtual || matriz[linhaAtual][colunaAtual] == 0)
       {
-        printf("continuei\n");
+        //  printf("continuei\n");
         continue;
       }
 
       multiplicadorLinha = matriz[linhaAtual][colunaAtual] * -1;
-      printf("\n\n MULTIPLICADOR %f \n", multiplicadorLinha);
+      // printf("\n\n MULTIPLICADOR %f \n", multiplicadorLinha);
 
       // Procurando linha que o valor na coluna atual é 1 (Possivel refatoração sem usar loop)
       for (int k = 0; k < linhas; k++)
@@ -225,20 +312,20 @@ void normalizarMatriz()
       // Multiplicando linha anterior para somar com a linha atual e zerar o campo apontado
       for (int k = 0; k < colunas; k++)
       {
-        printf("vetor[%d] = %f \n", k, vetor[k]);
+        //    printf("vetor[%d] = %f \n", k, vetor[k]);
         float novoValor = vetor[k] * multiplicadorLinha;
 
-        printf("multiplicado vetor[%d] = %f \n", k, novoValor);
-        printf("matriz[%d][%d] = %f \n", linhaAtual, k, matriz[linhaAtual][k]);
+        //printf("multiplicado vetor[%d] = %f \n", k, novoValor);
+        //printf("matriz[%d][%d] = %f \n", linhaAtual, k, matriz[linhaAtual][k]);
 
         matriz[linhaAtual][k] += novoValor;
-        printf("subtraida matriz[%d][%d] = %f \n", linhaAtual, k, matriz[linhaAtual][k]);
+        //printf("subtraida matriz[%d][%d] = %f \n", linhaAtual, k, matriz[linhaAtual][k]);
       }
     }
   }
 
-  printf("\n\n\n\n MATRIZ \n\n\n");
-  imprimirMatriz();
+  //printf("\n\n\n\n MATRIZ \n\n\n");
+  //imprimirMatriz();
   free(vetor);
 }
 
