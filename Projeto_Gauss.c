@@ -211,6 +211,17 @@ void checaZerosNaDiagonal()
 
     if (somaVetorAtual == 0)
     {
+      /*
+      * IMPLEMENTAR EXIT DO PROGRAMA
+      * IMPLEMENTAR EXIT DO PROGRAMA
+      * IMPLEMENTAR EXIT DO PROGRAMA
+      * IMPLEMENTAR EXIT DO PROGRAMA
+      * IMPLEMENTAR EXIT DO PROGRAMA
+      * IMPLEMENTAR EXIT DO PROGRAMA
+      * IMPLEMENTAR EXIT DO PROGRAMA
+      * IMPLEMENTAR EXIT DO PROGRAMA
+      */
+
       printf("FUDEUDISAL.");
     }
 
@@ -224,7 +235,7 @@ void checaZerosNaDiagonal()
       else
       {
         quantidadeColunas[i][colunas - 1] = linhaCorreta;
-        printf("\n linha correta %d coluna %d : %d \n", i, colunas, quantidadeColunas[linhaCorreta][colunas - 1]);
+        printf("\n linha correta %d coluna %d : %d \n", linhaCorreta, colunas, quantidadeColunas[linhaCorreta][colunas - 1]);
       }
     }
     else
@@ -238,11 +249,10 @@ void checaZerosNaDiagonal()
       {
         for (int j = 0; j < colunas - 1; j++)
         {
-          printf("\n if linha vazia %d coluna %d : %d \n", j, colunas - 1, quantidadeColunas[j][colunas - 1]);
           if (quantidadeColunas[j][colunas - 1] == -1)
           {
             quantidadeColunas[j][colunas - 1] = linhaCorreta;
-            printf("\n linha correta %d coluna %d : %d \n", j, colunas, quantidadeColunas[linhaCorreta][colunas - 1]);
+            printf("\n linha correta %d coluna %d : %d \n", linhaCorreta, colunas, quantidadeColunas[linhaCorreta][colunas - 1]);
             break;
           }
         }
@@ -271,7 +281,6 @@ void checaZerosNaDiagonal()
     printf("\n\t");
     if (linha != quantidadeColunas[linha][colunas - 1] && linha > quantidadeColunas[linha][colunas - 1])
     {
-
       trocaDeLinhas(linha, quantidadeColunas[linha][colunas - 1]);
     }
     printf("\n");
