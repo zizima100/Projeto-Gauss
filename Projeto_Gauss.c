@@ -146,7 +146,9 @@ void trocaDeLinhas(int linhaTrocada, int linhaNova)
 
 void checaZerosNaDiagonal()
 {
-  int colunaAtual, colunaComparada, linhaCorreta, somaVetorAtual, **quantidadeColunas = (int **)malloc((linhas) * sizeof(int *));
+  int colunaAtual, colunaComparada, somaVetorAtual, linhaCorreta, **quantidadeColunas = (int **)malloc((linhas) * sizeof(int *)),
+                                                                  *vetorLinhasUtilizadas = (int *)malloc(linhas * sizeof(int));
+
   float *vetorLinhaAtual = (float *)malloc(colunas * sizeof(float)), *vetorComparado = (float *)malloc(colunas * sizeof(float));
 
   for (int i = 0; i < linhas; i++)
@@ -197,17 +199,26 @@ void checaZerosNaDiagonal()
 
   for (int i = 0; i < colunas - 1; i++)
   {
+    printf("\nITEREI %d \n\n", i);
     somaVetorAtual = 0;
 
     for (int j = 0; j < linhas; j++)
     {
+      printf("vetor linhas utilizadas[%d] %d \n", j, vetorLinhasUtilizadas[j]);
       if (quantidadeColunas[i][j] == 1)
       {
+        printf("DEU PRA IR NA LINHA %d \n", j);
         linhaCorreta = j;
+      }
+      else
+      {
+        printf("NAO DEU PRA IR NA LINHA %d pq ela ja foi utilizada \n", j);
       }
 
       somaVetorAtual += quantidadeColunas[i][j];
     }
+
+    //vetorLinhasUtilizadas[linhaCorreta] = 1;
 
     if (somaVetorAtual == 0)
     {
@@ -292,6 +303,7 @@ void checaZerosNaDiagonal()
   free(vetorLinhaAtual);
   free(vetorComparado);
   free(quantidadeColunas);
+  free(vetorLinhasUtilizadas);
 }
 
 // Transforma as diagonais em 1 e as colunas em 0 (Passo 7 ao 13)
@@ -326,8 +338,17 @@ void normalizarMatriz()
         continue;
       }
 
-      multiplicadorLinha = matriz[linhaAtual][colunaAtual] * -1;
-      // printf("\n\n MULTIPLICADOR %f \n", multiplicadorLinha);
+      if (matriz[linhaAtual][colunaAtual] > 0)
+      {
+        multiplicadorLinha = matriz[linhaAtual][colunaAtual] * -1;
+      }
+      else
+      {
+        multiplicadorLinha = 0;
+      }
+
+      printf("\n\n MULTIPLICADOR %f \n", multiplicadorLinha);
+      printf("\n\n matriz[%d][%d] = %f \n", linhaAtual, colunaAtual, matriz[linhaAtual][colunaAtual]);
 
       // Procurando linha que o valor na coluna atual é 1 (Possivel refatoração sem usar loop)
       for (int k = 0; k < linhas; k++)
@@ -339,7 +360,8 @@ void normalizarMatriz()
       // Multiplicando linha anterior para somar com a linha atual e zerar o campo apontado
       for (int k = 0; k < colunas; k++)
       {
-        //    printf("vetor[%d] = %f \n", k, vetor[k]);
+        printf("vetor[%d] = %f \n", k, vetor[k]);
+        printf("multiplicador linha = %f \n", multiplicadorLinha);
         float novoValor = vetor[k] * multiplicadorLinha;
 
         //printf("multiplicado vetor[%d] = %f \n", k, novoValor);
@@ -351,8 +373,8 @@ void normalizarMatriz()
     }
   }
 
-  //printf("\n\n\n\n MATRIZ \n\n\n");
-  //imprimirMatriz();
+  printf("\n\n\n\n MATRIZ \n\n\n");
+  imprimirMatriz();
   free(vetor);
 }
 
