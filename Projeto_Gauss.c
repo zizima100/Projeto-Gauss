@@ -9,7 +9,20 @@ int* vetor_ordem;
 
 void liberarMemoriaMatriz()
 {
+  free(vetor_ordem);
+  for(int i = 0; i < linhas; i++)
+  {
+    free(matriz[i]);
+  }
   free(matriz);
+}
+
+void fecharPrograma()
+{
+  fflush(stdin);
+  getchar();
+  liberarMemoriaMatriz();
+  exit(0);
 }
 
 void insercaoMatrizManual()
@@ -110,8 +123,6 @@ void checarLinhasIguais()
           quantidadeElementosIguais++;
       }
 
-      printf("\n\n\tComparou a  linha %d com a linha %d.", i, linhaAtual);
-
       //Termina o programa em caso de linhas iguais.
       if (quantidadeElementosIguais == colunas)
       {
@@ -119,65 +130,10 @@ void checarLinhasIguais()
         printf("\n\tPor conta disso, é impossível resolver o sistema");
         printf("\n\n\tO programa será encerrado agora . . .");
 
-        fflush(stdin);
-        getchar();
-
-        exit(0);
+        fecharPrograma();
       }
     }
     linhaAtual = i + 1;
-  }
-}
-
-//Realiza o processo de troca de linhas.
-void trocaDeLinhas(int linhaTrocada, int linhaNova)
-{
-  float linhaTemporaria; //Variável temporária usada para o swap de linhas.
-
-  for (int i = 0; i < colunas; i++)
-  {
-    linhaTemporaria = matriz[linhaTrocada][i];
-    matriz[linhaTrocada][i] = matriz[linhaNova][i];
-    matriz[linhaNova][i] = linhaTemporaria;
-  }
-
-  printf("\n\n\tTrocou linha %d pela linha %d\n", linhaTrocada, linhaNova);
-  imprimirMatriz();
-}
-
-void checaZerosNaDiagonal()
-{
-  for (int linha = 0; linha < linhas; linha++)
-  {
-    int coluna = linha;
-
-    if (matriz[linha][coluna] == 0)
-    {
-      printf("\n\n\tExiste 0 na diagonal da linha %d!", linha + 1);
-
-      //Checa e efetua trocas possíveis.
-      for (int i = 0; i < linhas; i++)
-      {
-        if (matriz[i][coluna] != 0 && matriz[linha][i] != 0)
-        {
-          printf("\n\t-Da pra trocar a %dª linha com a %dª!!", linha + 1, i + 1);
-          trocaDeLinhas(linha, i);
-          break;
-        }
-      }
-    }
-
-    if (matriz[linha][coluna] == 0)
-    {
-      printf("\n\n\tInfelizmente não tem como eliminar o 0 da diagonal.");
-      printf("\n\tPor conta disso, é impossível resolver o sistema.");
-      printf("\n\n\tO programa será encerrado . . .");
-
-      fflush(stdin);
-      getchar();
-
-      exit(0);
-    }
   }
 }
 
@@ -190,16 +146,10 @@ void normalizarMatriz()
   {
     for (int linhaAtual = 0; linhaAtual < linhas; linhaAtual++)
     {
-      printf("\n\n\n\n MATRIZ \n\n\n");
-      imprimirMatriz();
-      printf("\n\n\n\n MATRIZ \n\n\n");
-
       // Diagonal da coluna atual
       if (matriz[colunaAtual][colunaAtual] != 1)
       {
-        printf("DIAGONAL %d \n", colunaAtual);
         divisorLinha = matriz[colunaAtual][colunaAtual];
-        printf("DIVISOR = %f \n", divisorLinha);
         for (int k = 0; k < colunas; k++)
         {
           matriz[colunaAtual][k] /= divisorLinha;
@@ -209,12 +159,10 @@ void normalizarMatriz()
       // Se estiver apontando para uma diagonal ou o campo já estiver 0, continuo o for
       if (linhaAtual == colunaAtual || matriz[linhaAtual][colunaAtual] == 0)
       {
-        printf("continuei\n");
         continue;
       }
 
       multiplicadorLinha = matriz[linhaAtual][colunaAtual] * -1;
-      printf("\n\n MULTIPLICADOR %f \n", multiplicadorLinha);
 
       // Procurando linha que o valor na coluna atual é 1 (Possivel refatoração sem usar loop)
       for (int k = 0; k < linhas; k++)
@@ -226,25 +174,18 @@ void normalizarMatriz()
       // Multiplicando linha anterior para somar com a linha atual e zerar o campo apontado
       for (int k = 0; k < colunas; k++)
       {
-        printf("vetor[%d] = %f \n", k, vetor[k]);
         float novoValor = vetor[k] * multiplicadorLinha;
 
-        printf("multiplicado vetor[%d] = %f \n", k, novoValor);
-        printf("matriz[%d][%d] = %f \n", linhaAtual, k, matriz[linhaAtual][k]);
-
         matriz[linhaAtual][k] += novoValor;
-        printf("subtraida matriz[%d][%d] = %f \n", linhaAtual, k, matriz[linhaAtual][k]);
       }
     }
   }
 
-  printf("\n\n\n\n MATRIZ \n\n\n");
-  imprimirMatriz();
   free(vetor);
 }
 
-// verificando se o vetor_ordem � o �ltimo caso
-bool ultimoCasoOrdem()
+// verificando se o vetor_ordem � o �ltimo caso
+int ultimoCasoOrdem()
 {
 	int j;
 	int cont_iguais = 0;
@@ -258,9 +199,9 @@ bool ultimoCasoOrdem()
 	}
 
 	if(cont_iguais == linhas)
-		return true;
+		return 1;
 	else
-		return false;
+		return 0;
 }
 
 void permutarMatriz()
@@ -269,7 +210,7 @@ void permutarMatriz()
     int cont_diferentes;
 
 	int i, j, k;
-	bool tem_zero;
+	int tem_zero;
 	
     int menor;
 	int indice;
@@ -284,17 +225,17 @@ void permutarMatriz()
     
 	do
 	{
-	    tem_zero = false;
+	    tem_zero = 0;
 		for(i = 0; i < linhas; i++)
 		{
 			if (matriz[vetor_ordem[i]][i] == 0)
 			{
-				tem_zero = true;
+				tem_zero = 1;
 				break;
 			}
 		}
 
-		if(tem_zero)
+		if(tem_zero == 1)
 		{
 			for(i = 0; i < linhas; i++)
                 vetor_naoexistentes[i] = -1;
@@ -348,10 +289,10 @@ void permutarMatriz()
                 j++;
             }
 		}
-	} while((tem_zero) && (!ultimoCasoOrdem()));
+	} while((tem_zero == 1) && (ultimoCasoOrdem() == 0));
 
 	// substituindo matriz original
-	if(!tem_zero)
+	if(tem_zero == 0)
 	{
 		float** matriz_copia = (float**) malloc(linhas * sizeof(float*));
 		for (i = 0; i < linhas; i++)
@@ -370,15 +311,18 @@ void permutarMatriz()
 				matriz[i][j] = matriz_copia[vetor_ordem[i]][j];
 			}
 		}
-		
+		for(i = 0; i < linhas; i++)
+    {
+      free(matriz_copia[i]);
+    }
+    free(matriz_copia);
 		free(vetor_naoexistentes);
-		free(vetor_ordem);
 	}
 
 	if(ultimoCasoOrdem())
     {
-        printf("\n\nN�o tem como tirar os zeros da diagonal principal. Sistema imposs�vel de ser resolvido!\n\n");
-        system("pause");
+        printf("\n\nNao tem como tirar os zeros da diagonal principal. Sistema imposs�vel de ser resolvido!\n\n");
+        fecharPrograma();
     }
 }
 
@@ -391,17 +335,19 @@ int main()
 
   imprimirMatriz();
 
-  checarLinhasIguais();
-
-  //checaZerosNaDiagonal();
-
-  //normalizarMatriz();
-  
-  permutarMatriz();
-
-  liberarMemoriaMatriz();
-
+  printf("\n\tPressione enter para continuar . . .");
   fflush(stdin);
   getchar();
-  return (0);
+  system("cls");
+
+  checarLinhasIguais();
+
+  permutarMatriz();
+
+  normalizarMatriz();
+
+  printf("\n\tA solução do sistema é:\n");
+  imprimirMatriz();
+
+  fecharPrograma();
 }
