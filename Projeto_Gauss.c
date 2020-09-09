@@ -5,12 +5,12 @@
 
 int linhas, colunas;
 float **matriz;
-int* vetor_ordem;
+int *vetor_ordem;
 
 void liberarMemoriaMatriz()
 {
   free(vetor_ordem);
-  for(int i = 0; i < linhas; i++)
+  for (int i = 0; i < linhas; i++)
   {
     free(matriz[i]);
   }
@@ -168,7 +168,9 @@ void normalizarMatriz()
       for (int k = 0; k < linhas; k++)
       {
         if (matriz[k][colunaAtual] == 1)
+        {
           vetor = matriz[k];
+        }
       }
 
       // Multiplicando linha anterior para somar com a linha atual e zerar o campo apontado
@@ -187,143 +189,170 @@ void normalizarMatriz()
 // verificando se o vetor_ordem � o �ltimo caso
 int ultimoCasoOrdem()
 {
-	int j;
-	int cont_iguais = 0;
+  int j;
+  int cont_iguais = 0;
 
-	j = 0;
-	for(int i = linhas - 1; i >= 0; i--)
-	{
-		if(vetor_ordem[j] == i)
-			cont_iguais++;
-        j++;
-	}
+  j = 0;
+  for (int i = linhas - 1; i >= 0; i--)
+  {
+    if (vetor_ordem[j] == i)
+      cont_iguais++;
+    j++;
+  }
 
-	if(cont_iguais == linhas)
-		return 1;
-	else
-		return 0;
+  if (cont_iguais == linhas)
+    return 1;
+  else
+    return 0;
 }
 
 void permutarMatriz()
 {
-    int* vetor_naoexistentes = (int*) malloc(linhas*sizeof(int));
-    int cont_diferentes;
+  int *vetor_naoexistentes = (int *)malloc(linhas * sizeof(int));
+  int cont_diferentes;
+  int cont;
 
-	int i, j, k;
-	int tem_zero;
-	
-    int menor;
-	int indice;
-	
-	int evoluir;
-	int cont;
+  int i, j, k;
+  int tem_zero;
+  int evoluiu;
 
-	// instanciando o vetor_ordem com a primeira ordem
-	vetor_ordem = (int*) malloc(linhas*sizeof(int));
-	for (i = 0; i < linhas; i++)
-			vetor_ordem[i] = i;
-    
-	do
-	{
-	    tem_zero = 0;
-		for(i = 0; i < linhas; i++)
-		{
-			if (matriz[vetor_ordem[i]][i] == 0)
-			{
-				tem_zero = 1;
-				break;
-			}
-		}
+  int indice;
 
-		if(tem_zero == 1)
-		{
-			for(i = 0; i < linhas; i++)
-                vetor_naoexistentes[i] = -1;
+  vetor_ordem = (int *)malloc(linhas * sizeof(int));
 
-	        for(i = linhas - 1; i >= 0; i--)
-	        {
-	            evoluir = vetor_ordem[i] + 1;
-	            cont_diferentes = 0;
-	            cont = 0;
-	            
-	            for(j = i - 1; j >= 0; j--)
-	            {
-	                if(vetor_ordem[j] != evoluir)
-	                {
-	                    cont_diferentes++;
-					}
-					cont++;
-	            }
-	            
-	            if((cont_diferentes == (cont)) && (evoluir < linhas))
-	            {
-	            	vetor_ordem[i] = evoluir;
-	            	indice = i;
-	            	break;
-	            }
-	        }
+  for (i = 0; i < linhas; i++)
+  {
+    vetor_ordem[i] = i;
+  }
 
-            k = 0;
-            for(i = 0; i < linhas; i++)
+  do
+  {
+    tem_zero = 0;
+
+    for (i = 0; i < linhas; i++)
+    {
+      if (matriz[vetor_ordem[i]][i] == 0)
+      {
+        tem_zero = 1;
+        break;
+      }
+    }
+
+    if (tem_zero == 1)
+    {
+      for (i = 0; i < linhas; i++)
+      {
+        vetor_naoexistentes[i] = -1;
+      }
+
+      // preencher com o maior valido e existente
+      evoluiu = 0;
+      for (i = linhas - 1; i >= 0; i--)
+      {
+        // for para percorrer indices 0 ate qtdeEquacoes
+        for (j = 0; j < linhas; j++)
+        {
+          if (j <= vetor_ordem[i])
+          {
+            continue;
+          }
+
+          cont_diferentes = 0;
+          cont = 0;
+
+          for (k = i - 1; k >= 0; k--)
+          {
+            if (vetor_ordem[k] != j)
             {
-                cont_diferentes = 0;
-                for(j = 0; j <= indice; j++)
-                {
-                    if (i != vetor_ordem[j])
-                        cont_diferentes++;
-                }
-                if (cont_diferentes == (indice + 1))
-                {
-                    vetor_naoexistentes[k] = i;
-                    k++;
-                }
+              cont_diferentes++;
             }
+            cont++;
+          }
 
-            j = 0;
-            for (i = indice + 1; i < linhas; i++)
-            {
-                if(vetor_naoexistentes[j] == -1)
-                    break;
+          if ((cont_diferentes == cont) && (j > vetor_ordem[i]))
+          {
+            vetor_ordem[i] = j;
+            indice = i;
+            evoluiu = 1;
+            break;
+          }
+        }
 
-                vetor_ordem[i] = vetor_naoexistentes[j];
-                j++;
-            }
-		}
-	} while((tem_zero == 1) && (ultimoCasoOrdem() == 0));
+        if (evoluiu == 1)
+        {
+          break;
+        }
+      }
 
-	// substituindo matriz original
-	if(tem_zero == 0)
-	{
-		float** matriz_copia = (float**) malloc(linhas * sizeof(float*));
-		for (i = 0; i < linhas; i++)
-		{
-			matriz_copia[i] = (float*) malloc(colunas * sizeof(float));
-			for (j = 0; j < colunas; j++)
-			{
-				matriz_copia[i][j] = matriz[i][j];
-			}
-		}
+      k = 0;
+      for (i = 0; i < linhas; i++)
+      {
+        cont_diferentes = 0;
+        for (j = 0; j <= indice; j++)
+        {
+          if (i != vetor_ordem[j])
+          {
+            cont_diferentes++;
+          }
+        }
 
-		for(i = 0; i < linhas; i++)
-		{
-			for(j = 0; j < colunas; j++)
-			{
-				matriz[i][j] = matriz_copia[vetor_ordem[i]][j];
-			}
-		}
-		for(i = 0; i < linhas; i++)
+        if (cont_diferentes == (indice + 1))
+        {
+          vetor_naoexistentes[k] = i;
+          k++;
+        }
+      }
+
+      j = 0;
+      for (i = indice + 1; i < linhas; i++)
+      {
+        if (vetor_naoexistentes[j] == -1)
+        {
+          break;
+        }
+
+        vetor_ordem[i] = vetor_naoexistentes[j];
+        j++;
+      }
+    }
+  } while ((tem_zero == 1) && (ultimoCasoOrdem() == 0));
+
+  // substituindo matriz original
+  if (tem_zero == 0)
+  {
+    // copiando matriz original
+    float **matriz_copia = (float **)malloc(linhas * sizeof(float *));
+    for (i = 0; i < linhas; i++)
+    {
+      matriz_copia[i] = (float *)malloc(colunas * sizeof(float));
+      for (j = 0; j < colunas; j++)
+      {
+        matriz_copia[i][j] = matriz[i][j];
+      }
+    }
+
+    for (i = 0; i < linhas; i++)
+    {
+      for (j = 0; j < colunas; j++)
+      {
+        matriz[i][j] = matriz_copia[vetor_ordem[i]][j];
+      }
+    }
+
+    for (i = 0; i < linhas; i++)
     {
       free(matriz_copia[i]);
     }
-    free(matriz_copia);
-		free(vetor_naoexistentes);
-	}
 
-	if(ultimoCasoOrdem())
-    {
-        printf("\n\nNao tem como tirar os zeros da diagonal principal. Sistema imposs�vel de ser resolvido!\n\n");
-        fecharPrograma();
-    }
+    free(matriz_copia);
+    free(vetor_naoexistentes);
+  }
+
+  if (ultimoCasoOrdem() == 1)
+  {
+    printf("\n\nN�o tem como tirar os zeros da diagonal principal. Sistema imposs�vel\n\n");
+    fecharPrograma();
+  }
 }
 
 int main()
