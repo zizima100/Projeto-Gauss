@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <locale.h>
 #include <ctype.h>
+#define INT_MAX 2147483647;
 
 int linhas, colunas;
 float **matriz;
@@ -107,34 +108,47 @@ void imprimirMatriz()
 
 void checarLinhasIguais()
 {
-  int linhaAtual = 0, quantidadeElementosIguais;
+  int quantidadeElementosIguais;
+  float *resultadoDivisoes = (float *)malloc(linhas * sizeof(float));
 
   for (int i = 0; i < linhas - 1; i++)
   {
-    linhaAtual++;
-
-    for (linhaAtual; linhaAtual < linhas; linhaAtual++)
+    for (int j = i + 1; j < linhas; j++)
     {
       quantidadeElementosIguais = 0;
 
-      for (int j = 0; j < colunas; j++)
+      for (int k = 0; k < colunas - 1; k++)
       {
-        if (matriz[i][j] == matriz[linhaAtual][j])
-          quantidadeElementosIguais++;
+        if (matriz[j][k] != 0)
+        {
+          resultadoDivisoes[k] = (float)matriz[i][k] / (float)matriz[j][k];
+        }
+        else
+        {
+          resultadoDivisoes[k] = INT_MAX;
+        }
+
+        if (k > 0)
+        {
+          if (resultadoDivisoes[k] == resultadoDivisoes[k - 1])
+          {
+            quantidadeElementosIguais++;
+          }
+        }
       }
 
-      //Termina o programa em caso de linhas iguais.
-      if (quantidadeElementosIguais == colunas)
+      if (quantidadeElementosIguais == colunas - 2)
       {
-        printf("\n\n\tA linha %d e a linha %d são iguais!", i, linhaAtual);
+        printf("\n\n\t Os resultados das divisões da linha %d e a linha %d são iguais!", i, i + 1);
         printf("\n\tPor conta disso, é impossível resolver o sistema");
         printf("\n\n\tO programa será encerrado agora . . .");
-
+        free(resultadoDivisoes);
         fecharPrograma();
       }
     }
-    linhaAtual = i + 1;
   }
+
+  free(resultadoDivisoes);
 }
 
 // Transforma as diagonais em 1 e as colunas em 0 (Passo 7 ao 13)
