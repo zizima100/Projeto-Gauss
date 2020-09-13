@@ -135,9 +135,17 @@ void checarLinhasIguais()
             quantidadeElementosIguais++;
           }
         }
+
+        if (k + 1 == colunas - 1)
+        {
+          if (resultadoDivisoes[0] == resultadoDivisoes[k])
+          {
+            quantidadeElementosIguais++;
+          }
+        }
       }
 
-      if (quantidadeElementosIguais == colunas - 2)
+      if (quantidadeElementosIguais == colunas - 1)
       {
         printf("\n\n\t Os resultados das divisões da linha %d e a linha %d são iguais!", i, i + 1);
         printf("\n\tPor conta disso, é impossível resolver o sistema");
